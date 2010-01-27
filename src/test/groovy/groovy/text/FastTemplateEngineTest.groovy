@@ -361,4 +361,29 @@ class FastTemplateEngineTest {
     assert 'Hi Alice, have you seen the Rabbit and the Queen?' == result
   }
 
+
+  @Test public void multiLineCodeSectionWithEmbeddedBindings() {
+    String data = '''<%
+      out << "Hi ${alice}, "
+      out << "have you seen the ${rabbit} "
+      out << "and the ${queen}"
+    %>?'''
+    String result = template(data, binding)
+    assert 'Hi Alice, have you seen the Rabbit and the Queen?' == result
+  }
+
+  @Test public void multiLineCodeSectionWithErrorsAndBindings() {
+    String data = '''<%
+      out << "Hi ${alice}, "
+      out << "have you seen the ${ :rabbit} "
+      out << "and the ${queen}"
+    %>?'''
+    try {
+      template(data, binding)
+      assert false //we should trow an exception above
+    } catch (Throwable e) {
+      assert e.getMessage().contains("at line 3,")
+    }
+  }
+
 }
