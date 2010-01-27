@@ -1,0 +1,25 @@
+//import com.iteego.sunstone.topology.aws.AwsLauncher
+//import com.iteego.sunstone.topology.aws.AwsCredentials
+//import com.iteego.sunstone.topology.dsl.TopologyParser
+
+//build the jar using 'gradle' with no arguments. The jar ends up under build/lib. Type 'gradle --help' or 'gradle -t' to see how to build this project
+
+usePlugin 'groovy'
+defaultTasks 'clean', 'build'
+sourceCompatibility = 1.6
+
+dependencies {
+  groovy 'org.codehaus.groovy:groovy:1.7.0'
+  testCompile 'junit:junit:4.7'
+
+}
+
+compileJava {
+  options.compilerArgs = ['-Xlint:unchecked']
+}
+
+test {
+  options.fork = false
+  options.showOutput = true
+}
+
