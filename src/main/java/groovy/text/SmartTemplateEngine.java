@@ -15,7 +15,6 @@ import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 /*
  * Copyright 2003-2009 the original author or authors.
  *
@@ -93,15 +92,15 @@ import java.util.Stack;
  * @author tug@wilson.co.uk
  * @author Paul King
  */
-public class FastTemplateEngine extends TemplateEngine {
+public class SmartTemplateEngine extends TemplateEngine {
     private final ClassLoader parentLoader;
     private static int counter = 1;
 
-    public FastTemplateEngine() {
+    public SmartTemplateEngine() {
         this(FastTemplate.class.getClassLoader());
     }
 
-    public FastTemplateEngine(ClassLoader parentLoader) {
+    public SmartTemplateEngine(ClassLoader parentLoader) {
         this.parentLoader = parentLoader;
     }
 

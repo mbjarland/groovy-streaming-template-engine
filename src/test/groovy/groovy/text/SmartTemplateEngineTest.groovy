@@ -2,10 +2,9 @@ package groovy.text
 
 import org.junit.Test
 
-import org.junit.After
 import org.junit.Before
 
-class FastTemplateEngineTest {
+class SmartTemplateEngineTest {
   TemplateEngine engine
   Map binding
   private static final String SIXTY_FOUR_K_OF_A
@@ -21,7 +20,7 @@ class FastTemplateEngineTest {
   }
 
   @Before public void setUp() {
-    engine = new FastTemplateEngine();
+    engine = new SmartTemplateEngine();
     binding = [alice: 'Alice', rabbit: 'Rabbit', queen: 'Queen', desk: 'writing desk']
   }
 
