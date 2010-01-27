@@ -79,7 +79,7 @@ import java.util.Map;
  * following in your <code>web.xml</code> file (plus a corresponding servlet-mapping element):
  * <pre>
  * &lt;servlet&gt;
- *   &lt;servlet-name&gt;FastTemplate&lt;/servlet-name&gt;
+ *   &lt;servlet-name&gt;SmartTemplate&lt;/servlet-name&gt;
  *   &lt;servlet-class&gt;groovy.servlet.TemplateServlet&lt;/servlet-class&gt;
  *   &lt;init-param&gt;
  *     &lt;param-name&gt;template.engine&lt;/param-name&gt;
@@ -97,7 +97,7 @@ public class SmartTemplateEngine extends TemplateEngine {
     private static int counter = 1;
 
     public SmartTemplateEngine() {
-        this(FastTemplate.class.getClassLoader());
+        this(SmartTemplate.class.getClassLoader());
     }
 
     public SmartTemplateEngine(ClassLoader parentLoader) {
@@ -109,10 +109,10 @@ public class SmartTemplateEngine extends TemplateEngine {
     */
 
     public Template createTemplate(final Reader reader) throws CompilationFailedException, ClassNotFoundException, IOException {
-        return new FastTemplate(reader, parentLoader);
+        return new SmartTemplate(reader, parentLoader);
     }
 
-    private static class FastTemplate implements Template {
+    private static class SmartTemplate implements Template {
         final Closure template;
         private static final String SCRIPT_HEAD =
             "package groovy.tmp.templates;" +
@@ -175,6 +175,11 @@ public class SmartTemplateEngine extends TemplateEngine {
         private static void finishStringSection(List<StringSection> sections, StringSection currentSection,
                                                 StringBuilder templateExpressions,
                                                 Position lastSourcePosition, Position targetPosition) {
+            //when we get exceptions from the parseXXX methods in the main loop, we might try to
+            //re-finish a section
+            if (currentSection.lastSourcePosition != null) {
+                return;
+            }
             currentSection.lastSourcePosition = new Position(lastSourcePosition);
             sections.add(currentSection);
             //templateExpressions.append("//lines[").append(currentSection.firstLine).append(",").append(currentSection.lastLine).append("]\n");           
@@ -221,7 +226,7 @@ public class SmartTemplateEngine extends TemplateEngine {
          * @throws ClassNotFoundException
          * @throws IOException
          */
-        FastTemplate(final Reader source, final ClassLoader parentLoader) throws CompilationFailedException, ClassNotFoundException, IOException {
+        SmartTemplate(final Reader source, final ClassLoader parentLoader) throws CompilationFailedException, ClassNotFoundException, IOException {
             final StringBuilder target = new StringBuilder();
             List<StringSection> sections = new ArrayList<StringSection>();
             Position sourcePosition = new Position(1, 1);
@@ -368,22 +373,6 @@ public class SmartTemplateEngine extends TemplateEngine {
             clear(lookAhead);
         }
 
-        private void handleEscapeSequence(char firstChar,
-                                          char  expectedSecondChar,
-                                          final Reader source,
-                                          final Position sourcePosition,
-                                          final StringBuilder lookAhead,
-                                          StringSection currentSection) throws IOException, FinishedReadingException {
-            int c = read(source, sourcePosition, lookAhead);
-            if (c == expectedSecondChar) {
-                currentSection.data.append(firstChar);
-            } else {
-                currentSection.data.append('\\');
-                currentSection.data.append('$');
-            }
-
-        }
-
         private Closure createTemplateClosure(List<StringSection> sections,
                                               final ClassLoader parentLoader,
                                               StringBuilder target) throws ClassNotFoundException {
@@ -417,8 +406,10 @@ public class SmartTemplateEngine extends TemplateEngine {
             return result;
         }
 
-        private static void parseGString(Reader reader, StringBuilder target,
-                                         Position sourcePosition, Position targetPosition) throws IOException, FinishedReadingException {
+        private static void parseGString(final Reader reader,
+                                         final StringBuilder target,
+                                         final Position sourcePosition,
+                                         final Position targetPosition) throws IOException, FinishedReadingException {
             append(target, targetPosition, "out<<\"\"\"${");
 
             while (true) {
@@ -479,8 +470,8 @@ public class SmartTemplateEngine extends TemplateEngine {
          */
         private static void parseExpression(final Reader reader,
                                             final StringBuilder target,
-                                            Position sourcePosition,
-                                            Position targetPosition) throws IOException, FinishedReadingException {
+                                            final Position sourcePosition,
+                                            final Position targetPosition) throws IOException, FinishedReadingException {
             append(target, targetPosition, "out<<\"\"\"${");
 
             while (true) {
@@ -537,6 +528,12 @@ public class SmartTemplateEngine extends TemplateEngine {
                     if (precedingSection != null) {
                         //if the error was thrown on the same row as where the last string section ended, fix column value
                         offsetPositionFromSection(errorPosition, precedingSection);
+                        //the below being true indicates that we had an unterminated ${ or <% sequence and
+                        //the column is thus meaningless, we reset it to where the %{ or <% starts to at
+                        //least give the user a sporting chance
+                        if (sections.get(sections.size()-1) == precedingSection) {
+                            errorPosition.column = precedingSection.lastSourcePosition.column;
+                        }
 
                         String message = mangleExceptionMessage(e.getMessage(), errorPosition);
                         result = new GroovyRuntimeException(message);

@@ -385,4 +385,34 @@ class SmartTemplateEngineTest {
     }
   }
 
+  @Test public void nonTerminatedGStringExpression() {
+    String data = '''Hi
+                     ${alice'''
+    try {
+      template(data, binding)
+      assert false //we should trow an exception above
+    } catch (Throwable e) {
+      assert e.getMessage().contains("at line 2,")
+    }
+  }
+
+  @Test public void nonTerminatedLessThanExpression() {
+    String data = 'Hi <%=alice'
+    try {
+      template(data, binding)
+      assert false //we should trow an exception above
+    } catch (Throwable e) {
+      assert e.getMessage().contains("at line 1,")
+    }
+  }
+
+  @Test public void nonTerminatedLessThanCodeBlock() {
+    String data = 'Hi <% out << alice'
+
+    String result = template(data, binding)
+    //weirdly this is actually ok with the current implementation...
+    assert "Hi Alice" == result
+
+  }
+
 }
