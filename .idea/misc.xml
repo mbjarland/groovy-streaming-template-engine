@@ -20,10 +20,6 @@
   <component name="DependencyValidationManager">
     <option name="SKIP_IMPORT_STATEMENTS" value="false" />
   </component>
-  <component name="EclipseCompilerSettings">
-    <option name="GENERATE_NO_WARNINGS" value="true" />
-    <option name="DEPRECATION" value="false" />
-  </component>
   <component name="IdProvider" IDEtalkID="4807073481C0A3ED0237A41DA21720CC" />
   <component name="JavadocGenerationManager">
     <option name="OUTPUT_DIRECTORY" />

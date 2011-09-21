@@ -1,7 +1,6 @@
 package groovy.text
 
 import org.junit.Test
-
 import org.junit.Before
 
 class SmartTemplateEngineTest {
@@ -20,7 +19,7 @@ class SmartTemplateEngineTest {
   }
 
   @Before public void setUp() {
-    engine = new SmartTemplateEngine();
+    engine = new SmartTemplateEngine()
     binding = [alice: 'Alice', rabbit: 'Rabbit', queen: 'Queen', desk: 'writing desk']
   }
 
@@ -163,6 +162,61 @@ class SmartTemplateEngineTest {
     assert 'Alice\\\\' == result
   }
   
+  //We expect the SimpleTemplateEngine to chuck an exception with strings 
+  //larger than 64k. That is why I implemented this class in the first place. The 
+  //exception message is something along the lines of:
+  //
+  // groovy.lang.GroovyRuntimeException: Failed to parse template script (your template may contain an error or be trying to use expressions not currently supported): startup failed:
+  // SimpleTemplateScript1.groovy: 2: String too long. The given string is 65536 Unicode code units long, but only a maximum of 65535 is allowed.
+  // @ line 2, column 11.
+  //   out.print("""aaaa
+  @Test(expected=groovy.lang.GroovyRuntimeException)
+  public void testStringOver64kNoBinding_SimpleTemplateEngine() {
+    StringBuilder data = new StringBuilder()
+    data.append(SIXTY_FOUR_K_OF_A)
+
+    SimpleTemplateEngine engine = new SimpleTemplateEngine()
+
+    //the below line throws an exception...
+    Template template = engine.createTemplate(data.toString())
+    Writable writable = template.make()
+    StringWriter sw = new StringWriter()
+    writable.writeTo(sw)
+
+    String result = sw.toString()
+
+    assert result.startsWith("aaaaaaaaaaaaa")
+    assert result.endsWith("aaaaaaaaaaa")
+    assert result.length() == SIXTY_FOUR_K
+  }
+  
+  //We expect the GStringTemplateEngine to chuck an exception with strings 
+  //larger than 64k. That is why I implemented this class in the first place. The 
+  //exception message is something along the lines of:
+  //
+  // groovy.lang.GroovyRuntimeException: Failed to parse template script (your template may contain an error or be trying to use expressions not currently supported): startup failed:
+  // SimpleTemplateScript1.groovy: 2: String too long. The given string is 65536 Unicode code units long, but only a maximum of 65535 is allowed.
+  // @ line 2, column 11.
+  //   out.print("""aaaa
+  @Test(expected=groovy.lang.GroovyRuntimeException)
+  public void testStringOver64kNoBinding_GStringTemplateEngine() {
+    StringBuilder data = new StringBuilder()
+    data.append(SIXTY_FOUR_K_OF_A)
+
+    GStringTemplateEngine engine = new GStringTemplateEngine()
+
+    //the below line throws an exception...
+    Template template = engine.createTemplate(data.toString())
+    Writable writable = template.make()
+    StringWriter sw = new StringWriter()
+    writable.writeTo(sw)
+
+    String result = sw.toString()
+
+    assert result.startsWith("aaaaaaaaaaaaa")
+    assert result.endsWith("aaaaaaaaaaa")
+    assert result.length() == SIXTY_FOUR_K
+  }
   
   @Test public void testStringOver64kNoBinding() {
     StringBuilder data = new StringBuilder()

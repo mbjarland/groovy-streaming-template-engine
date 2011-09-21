@@ -1,2 +1,4 @@
 build/
 .idea/workspace.xml
+gradle.properties
+
