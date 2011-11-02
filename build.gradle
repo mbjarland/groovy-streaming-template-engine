@@ -20,62 +20,38 @@
 import org.apache.ivy.util.url.CredentialsStore
 
 apply plugin: 'groovy'
-apply plugin: 'maven'
+
+defaultTasks 'clean', 'build'
 
 group = 'com.iteego.glasir'
 version = '1.1-SNAPSHOT'
 
-// Define the Maven attributes that will be used for POM auto-generation
-def artifactId = projectDir.name
-def groupId = group
-def versionNumber = version
-
-defaultTasks 'clean', 'build'
-//sourceCompatibility = 1.6
-
 repositories { 
-  mavenRepo name: 'codehaus', urls: 'http://repository.codehaus.org'
+  mavenCentral()
+  mavenRepo urls: 'http://repository.codehaus.org'
+  mavenRepo urls: 'http://m2repo.spockframework.org/snapshots'
 
-  //(2) login/password, kept in gradle.properties and used to authenticate a reader to Artifactory.
-  //USER, PASSWORD and REALM are coming from gradle.properties
-  CredentialsStore.INSTANCE.addCredentials  ARTIFACTORY_REALM,
-                                            ARTIFACTORY_HOST,
+  //USER, PASSWORD from gradle.properties
+  CredentialsStore.INSTANCE.addCredentials  "Artifactory Realm",
+                                            "iteego.artifactoryonline.com",
                                             ARTIFACTORY_USER,
                                             ARTIFACTORY_PASSWORD
-  mavenRepo name: 'iteego-libs-releases', urls: "http://$ARTIFACTORY_HOST/artifactory/libs-snapshot-local"
-}
-
-uploadArchives {
-  repositories {
-    //(This will be used to deploy the Gradle artifact and ivy modules
-    mavenRepo urls: "http://$ARTIFACTORY_HOST/artifactory/libs-snapshot-local"
- 
-    //Use this to also deploy an auto-generated POM
-    repositories.mavenDeployer {
-      repository(url: "http://$ARTIFACTORY_HOST/artifactory/libs-snapshot-local") {
-        //(The login/password of an Artifactory user with deploy privileges.
-        //USER and PASSWORD are coming from ~/gradle.properties
-        authentication(userName: ARTIFACTORY_USER, password: ARTIFACTORY_PASSWORD)
-      }
-      pom.version = versionNumber
-      pom.artifactId = artifactId
-      pom.groupId = groupId
-    }
-  }
+  mavenRepo urls: "http://iteego.artifactoryonline.com/iteego/libs-snapshots-local"
 }
 
 dependencies {
-  groovy 'org.codehaus.groovy:groovy:1.8.0'
-  testCompile "junit:junit:4.8.2"
-  testCompile 'org.spockframework:spock-core:0.5-groovy-1.7'
+  groovy "org.codehaus.groovy:groovy:1.7.10"
+  testCompile "junit:junit:4.8.2",
+              "org.spockframework:spock-core:0.5-groovy-1.7"
 }
 
+/*
+buildscript {
+  dependencies {
+    classpath fileTree(dir: "$projectDir/lib", includes: ["*.jar"])
+  }
+}
+*/
 compileJava {
   options.compilerArgs = ['-Xlint:unchecked']
 }
-
-test {
-  forkEvery = null
-  //options.showOutput = true
-}
-

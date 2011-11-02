@@ -4,12 +4,12 @@ import spock.lang.*
 import java.util.zip.ZipFile
 import java.util.zip.ZipEntry
 import java.util.jar.Attributes
-import static groovy.text.SMARTTemplateEngineSpecification.EngineType.*
+import static groovy.text.SmartTemplateEngineSpecification.EngineType.*
 
 /**
  * http://code.google.com/p/spock/wiki/SpockBasics
  */
-class SMARTTemplateEngineSpecification extends Specification {
+class SmartTemplateEngineSpecification extends Specification {
   enum EngineType { 
     SMART('SmartTemplateEngine'), 
     SIMPLE('SimpleTemplateEngine'), 
@@ -63,22 +63,33 @@ class SMARTTemplateEngineSpecification extends Specification {
     sw
   }
 
-  @Unroll("#testName - #engineType should evaluate '#data' to '#expectedResult' using binding '#binding'")
-  def "Check templating that should work"() {
+  @Unroll
+  def "#testName - #engineType should evaluate '#data' to '#expectedResult' using binding '#binding'"() {
     expect: 
       template(engineType, data, binding) == expectedResult
 
     where:
-      data                   | expectedResult     | engineType   | binding        | testName
-      ''                     | ''                 | SMART        | null           | 'testEmptyStringNoBinding'
-      ''                     | ''                 | SMART        | defaultBinding | 'testEmptyStringWithBinding'
-      'bob'                  | 'bob'              | SMART        | null           | 'noExpressionsNoBinding'
-      'bob'                  | 'bob'              | SMART        | defaultBinding | 'noExpressionWithBinding'
+      data                   | expectedResult      | engineType | binding        | testName
+      ''                     | ''                  | SMART      | null           | 'emptyStringNoBinding'
+      ''                     | ''                  | SMART      | defaultBinding | 'emptyStringWithBinding'
+      'bob'                  | 'bob'               | SMART      | null           | 'noExpressionsNoBinding'
+      'bob'                  | 'bob'               | SMART      | defaultBinding | 'noExpressionsWithBinding'
 
-      'Hello World\\'        | 'Hello World\\'    | SMART        | null           | 'noExpressionsNoBindingEscapingAtEnd'
-      'Hello World\\'        | 'Hello World\\'    | SMART        | defaultBinding | 'noExpressionsWithBindingEscapingAtEnd'
-      'Hello World\\\\'      | 'Hello World\\\\'  | SMART        | null           | 'noExpressionsNoBindingDoubleEscapingAtEnd'
-      'Hello World\\\\'      | 'Hello World\\\\'  | SMART        | defaultBinding | 'noExpressionsWithBindingDoubleEscapingAtEnd'
+      '\\Hello World'        | '\\Hello World'     | SMART      | null           | 'noExpressionsNoBindingEscapingAtStart'
+      '\\Hello World'        | '\\Hello World'     | SMART      | defaultBinding | 'noExpressionsWithBindingEscapingAtStart'
+      '\\\\Hello World'      | '\\\\Hello World'   | SMART      | null           | 'noExpressionsNoBindingDoubleEscapingAtStart'
+      '\\\\Hello World'      | '\\\\Hello World'   | SMART      | defaultBinding | 'noExpressionsWithBindingDoubleEscapingAtStart'
+      '\\\\\\Hello World'    | '\\\\\\Hello World' | SMART      | null           | 'noExpressionsNoBindingTripleEscapingAtStart'
+      '\\\\\\Hello World'    | '\\\\\\Hello World' | SMART      | defaultBinding | 'noExpressionsWithBindingTripleEscapingAtStart'
+
+      'Hello World\\'        | 'Hello World\\'     | SMART      | null           | 'noExpressionsNoBindingEscapingAtEnd'
+      'Hello World\\'        | 'Hello World\\'     | SMART      | defaultBinding | 'noExpressionsWithBindingEscapingAtEnd'
+      'Hello World\\\\'      | 'Hello World\\\\'   | SMART      | null           | 'noExpressionsNoBindingDoubleEscapingAtEnd'
+      'Hello World\\\\'      | 'Hello World\\\\'   | SMART      | defaultBinding | 'noExpressionsWithBindingDoubleEscapingAtEnd'
+      'Hello World\\\\\\'    | 'Hello World\\\\\\' | SMART      | null           | 'noExpressionsNoBindingTripleEscapingAtEnd'
+      'Hello World\\\\\\'    | 'Hello World\\\\\\' | SMART      | defaultBinding | 'noExpressionsWithBindingTripleEscapingAtEnd'
+
+
       /*
       'bob'                  | 'bob'              | SMART        | defaultBinding | 'noExpressionWithBinding'
       'bob'                  | 'bob'              | SMART        | null           | 'noExpressionsNoBinding'
