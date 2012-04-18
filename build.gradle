@@ -17,8 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import org.apache.ivy.util.url.CredentialsStore
-
 apply plugin: 'groovy'
 
 defaultTasks 'clean', 'build'
@@ -32,11 +30,12 @@ repositories {
   mavenRepo url: 'http://m2repo.spockframework.org/snapshots'
 
   //USER, PASSWORD from gradle.properties
-  CredentialsStore.INSTANCE.addCredentials  "Artifactory Realm",
+  /*CredentialsStore.INSTANCE.addCredentials  "Artifactory Realm",
                                             "iteego.artifactoryonline.com",
                                             ARTIFACTORY_USER,
                                             ARTIFACTORY_PASSWORD
   mavenRepo url: "http://iteego.artifactoryonline.com/iteego/libs-snapshots-local"
+  */
 }
 
 dependencies {
