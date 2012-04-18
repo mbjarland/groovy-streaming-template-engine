@@ -218,6 +218,9 @@ class SmartTemplateEngineTest {
     assert result.length() == SIXTY_FOUR_K
   }
   
+  /**
+  * And expect the SmartTemplateEngine to work with arbitrary length strings
+  */
   @Test public void testStringOver64kNoBinding() {
     StringBuilder data = new StringBuilder()
     data.append(SIXTY_FOUR_K_OF_A)
