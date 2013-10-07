@@ -21,30 +21,21 @@ apply plugin: 'groovy'
 
 defaultTasks 'clean', 'build'
 
-group = 'com.iteego.glasir'
-version = '1.2-SNAPSHOT'
+group = 'org.codehaus.groovy'
+version = '1.2'
 
 repositories { 
   mavenCentral()
-  maven {
-    url 'http://repository.codehaus.org'
-  }
-  maven { 
-    url 'http://m2repo.spockframework.org/snapshots'
-  }
 }
-
 
 dependencies {
   def groovyVersion   = "2.1.6"
-  def spockVersion    = "0.7-groovy-2.0"
-  def junitVersion    = "4.8.2"
 
   compile "org.codehaus.groovy:groovy:$groovyVersion",
           "org.codehaus.groovy:groovy-templates:$groovyVersion"
 
-  testCompile "junit:junit:$junitVersion",
-              "org.spockframework:spock-core:$spockVersion"
+  testCompile "junit:junit:4.8.2",
+              "org.spockframework:spock-core:0.7-groovy-2.0"
 }
 
 task wrapper(type: Wrapper) {

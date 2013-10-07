@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/smart-template-engine.iml" filepath="$PROJECT_DIR$/.idea/smart-template-engine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/groovy-streaming-template-engine.iml" filepath="$PROJECT_DIR$/.idea/groovy-streaming-template-engine.iml" />
     </modules>
   </component>
 </project>
