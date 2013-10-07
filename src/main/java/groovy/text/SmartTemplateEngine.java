@@ -36,8 +36,12 @@ import java.util.Map;
  * placeholders in a template source text to produce the desired output using
  * a streaming approach. This engine has equivalent functionality to the
  * {@link groovy.text.SimpleTemplateEngine} but creates the template using writable
- * closures making it potentially more scalable for large templates or in streaming scenarios.
- * </P>
+ * closures making it more scalable for large templates or in streaming scenarios.
+ * <p>
+ * Specifically this template engine can handle strings larger than 64k which still
+ * causes problems for the other groovy template engines.
+ * </p>
+ * <p>
  * The template engine uses JSP style &lt;% %&gt; script and &lt;%= %&gt; expression syntax
  * or GString style expressions. The variable '<code>out</code>' is bound to the writer that the template
  * is being written to.
@@ -51,7 +55,7 @@ import java.util.Map;
  *     accepted  : true,
  *     title     : 'Groovy for COBOL programmers'
  * ]
- * def engine = new groovy.text.GStringTemplateEngine()
+ * def engine = new groovy.text.SmartTemplateEngine()
  * def text = '''\
  * Dear &lt;%= firstname %&gt; $lastname,
  * <p/>
@@ -89,8 +93,8 @@ import java.util.Map;
  * </pre>
  * In this case, your template source file should be HTML with the appropriate embedded placeholders.
  *
- * @author tug@wilson.co.uk
- * @author Paul King
+ * @author mbjarland@gmail.com
+ * @author Matias Bjarland
  */
 public class SmartTemplateEngine extends TemplateEngine {
     private final ClassLoader parentLoader;
