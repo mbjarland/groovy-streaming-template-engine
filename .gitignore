@@ -2,3 +2,6 @@
 /.idea/workspace.xml
 /gradle.properties
 /.gradle
+/.idea
+/lib
+

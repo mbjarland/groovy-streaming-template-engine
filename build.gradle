@@ -22,29 +22,32 @@ apply plugin: 'groovy'
 defaultTasks 'clean', 'build'
 
 group = 'com.iteego.glasir'
-version = '1.1-SNAPSHOT'
+version = '1.2-SNAPSHOT'
 
 repositories { 
   mavenCentral()
-  mavenRepo url: 'http://repository.codehaus.org'
-  mavenRepo url: 'http://m2repo.spockframework.org/snapshots'
-
-  //USER, PASSWORD from gradle.properties
-  /*CredentialsStore.INSTANCE.addCredentials  "Artifactory Realm",
-                                            "iteego.artifactoryonline.com",
-                                            ARTIFACTORY_USER,
-                                            ARTIFACTORY_PASSWORD
-  mavenRepo url: "http://iteego.artifactoryonline.com/iteego/libs-snapshots-local"
-  */
+  maven {
+    url 'http://repository.codehaus.org'
+  }
+  maven { 
+    url 'http://m2repo.spockframework.org/snapshots'
+  }
 }
 
+
 dependencies {
-  groovy "org.codehaus.groovy:groovy:1.8.6"
-  testCompile "junit:junit:4.8.2",
-              "org.spockframework:spock-core:0.6-groovy-1.8"
+  def groovyVersion   = "2.1.6"
+  def spockVersion    = "0.7-groovy-2.0"
+  def junitVersion    = "4.8.2"
+
+  compile "org.codehaus.groovy:groovy:$groovyVersion",
+          "org.codehaus.groovy:groovy-templates:$groovyVersion"
+
+  testCompile "junit:junit:$junitVersion",
+              "org.spockframework:spock-core:$spockVersion"
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '1.0-rc-1'
+  gradleVersion = '1.8'
   jarFile = '.gradle/wrapper/wrapper.jar'
 }
