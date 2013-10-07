@@ -70,3 +70,4 @@ groovy version still breaks for strings > 64k), shook my head and went back to m
 As templates can be used for a large number of arbitrary programming tasks ranging from code generation, 
 rendering of various text based formats, rendering HTML etc etc and as a number of years have passed 
 with no fix the 64k limitation in sight, I figured it was time to make this code publicly available. 
+
