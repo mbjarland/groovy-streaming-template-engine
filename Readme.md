@@ -35,7 +35,7 @@ _SimpleTemplateEngine_
 in my experience, templates larger than 64k are not all that uncommon (I certainly run into them 
 all the time) and this limitation seems artificial and unnecessary. 
 
-## Why is this not part of the groovy language?
+## Why is this not part of the groovy libraries?
 Perhaps one day it might be. I am certainly open to it if there is interest from the groovy 
 maintainers. I think either fixing the existing engines or adding a new one which can handle 
 arbitrary template sizes is essential for a modern, dynamic language such as groovy. 
