@@ -40,5 +40,5 @@ dependencies {
 
 task wrapper(type: Wrapper) {
   gradleVersion = '1.8'
-  jarFile = '.gradle/wrapper/wrapper.jar'
+  jarFile = 'wrapper/wrapper.jar'
 }
