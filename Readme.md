@@ -43,22 +43,59 @@ arbitrary template sizes is essential for a modern, dynamic language such as gro
 ## Usage
 The interface for this template engine is identical to the existing groovy template engines. 
 
-Example code: 
+Example code (tested with groovy 2.1.6 or below): 
 
-    SimpleTemplateEngine engine = new SimpleTemplateEngine()
-    
+    @GrabResolver(name='groovy-template', root='http://artifacts.iteego.com/artifactory/public-release-local')
+    @Grab('org.codehaus.groovy:groovy-streaming-template-engine:1.3')
+    @Grab('org.codehaus.groovy:groovy-templates:2.1.6')
+
+    import groovy.text.StreamingTemplateEngine
+    import groovy.text.SimpleTemplateEngine
+    import groovy.text.Template
+
+    StreamingTemplateEngine engine = new StreamingTemplateEngine()
+
     def binding = [bird: 'raven', subject: 'writing desk',  flag: true]
-    String data = "Alice, why is a ${bird}, <% flag ? 'like' : 'not like' %> a <%= subject %> <% out << '!' %>"
-    
+    String data = '''Alice, why is a ${bird} <%= flag ? 'like' : 'not like' %> a <%= subject %><% out << '?' %>'''
+
     Template template = engine.createTemplate(data)
-    Writable writable = template.make()
+    Writable writable = template.make(binding)
     StringWriter sw = new StringWriter()
     writable.writeTo(sw)
-    
+
     println "RESULT: $sw"
 
-Normally, the temlate data would probably be pulled from a file (ala jsp, gsp, asp, xsp) but the above 
-demonstrates using the template engine on a string and is self contained. 
+    //now test with a data set that breaks the existing template engines
+    StringBuilder b = new StringBuilder()
+    def sixtyFourAs = "a" * 64
+    1024.times { b << sixtyFourAs }
+    def sixtyFourKAs = b.toString()
+
+    println "LENGTH: ${sixtyFourKAs.length()}"
+
+    engine.createTemplate(sixtyFourKAs).make()
+
+    boolean threwException = false
+    try { 
+      new SimpleTemplateEngine().createTemplate(sixtyFourKAs).make()
+    } catch (GroovyRuntimeException e) {  
+      println "Simple template engine fails..."
+      threwException = e.message.contains('String too long')
+    }
+    assert threwException
+
+executing this gives: 
+
+    $ groovy sample_usage.groovy 
+    RESULT: Alice, why is a raven like a writing desk?
+    LENGTH: 65536
+    Simple template engine fails...
+
+(this code can be found in the samlpe_usage.groovy file in the root of the repo)
+
+Normally, the template data would probably be pulled from a file (ala jsp, gsp, asp, xsp) but the above 
+demonstrates using the template engine on a string, is self contained, and gives a feel for what this 
+repo is about. 
 
 ## History 
 I initially wrote this template engine a number of years ago, but omitted to make it publicly 
@@ -71,3 +108,9 @@ As templates can be used for a large number of arbitrary programming tasks rangi
 rendering of various text based formats, rendering HTML etc etc and as a number of years have passed 
 with no fix the 64k limitation in sight, I figured it was time to make this code publicly available. 
 
+## Disclaimer
+This repo does contain a fairly thought through set of unit tests and I am fairly confident believe the 
+engine does what it is supposed to do (at least to a degree comparable to the existing template engines). 
+
+That being said, this code has _not_ been tested in production and no guarantees are
+made as for the validity of the code or the robustness of the templating logic. 

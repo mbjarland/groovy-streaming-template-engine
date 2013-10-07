@@ -23,7 +23,7 @@ apply plugin: 'maven'
 defaultTasks 'clean', 'build'
 
 group = 'org.codehaus.groovy'
-version = '1.2'
+version = '1.3'
 
 repositories { 
   mavenCentral()
