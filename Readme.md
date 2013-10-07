@@ -45,6 +45,7 @@ The interface for this template engine is identical to the existing groovy templ
 
 Example code (tested with groovy 2.1.6 or below): 
 
+    ```groovy
     @GrabResolver(name='groovy-template', root='http://artifacts.iteego.com/artifactory/public-release-local')
     @Grab('org.codehaus.groovy:groovy-streaming-template-engine:1.3')
     @Grab('org.codehaus.groovy:groovy-templates:2.1.6')
@@ -83,6 +84,7 @@ Example code (tested with groovy 2.1.6 or below):
       threwException = e.message.contains('String too long')
     }
     assert threwException
+    ```
 
 executing this gives: 
 
