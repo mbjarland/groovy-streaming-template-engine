@@ -3,7 +3,7 @@ package groovy.text
 import org.junit.Test
 import org.junit.Before
 
-class SmartTemplateEngineTest {
+class StreamingTemplateEngineTest {
   TemplateEngine engine
   Map binding
   private static final String SIXTY_FOUR_K_OF_A
@@ -19,7 +19,7 @@ class SmartTemplateEngineTest {
   }
 
   @Before public void setUp() {
-    engine = new SmartTemplateEngine()
+    engine = new StreamingTemplateEngine()
     binding = [alice: 'Alice', rabbit: 'Rabbit', queen: 'Queen', desk: 'writing desk']
   }
 
@@ -219,7 +219,7 @@ class SmartTemplateEngineTest {
   }
   
   /**
-  * And expect the SmartTemplateEngine to work with arbitrary length strings
+  * And expect the StreamingTemplateEngine to work with arbitrary length strings
   */
   @Test public void testStringOver64kNoBinding() {
     StringBuilder data = new StringBuilder()

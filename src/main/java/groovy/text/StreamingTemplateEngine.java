@@ -55,7 +55,7 @@ import java.util.Map;
  *     accepted  : true,
  *     title     : 'Groovy for COBOL programmers'
  * ]
- * def engine = new groovy.text.SmartTemplateEngine()
+ * def engine = new groovy.text.StreamingTemplateEngine()
  * def text = '''\
  * Dear &lt;%= firstname %&gt; $lastname,
  * <p/>
@@ -83,11 +83,11 @@ import java.util.Map;
  * following in your <code>web.xml</code> file (plus a corresponding servlet-mapping element):
  * <pre>
  * &lt;servlet&gt;
- *   &lt;servlet-name&gt;SmartTemplate&lt;/servlet-name&gt;
+ *   &lt;servlet-name&gt;StreamingTemplate&lt;/servlet-name&gt;
  *   &lt;servlet-class&gt;groovy.servlet.TemplateServlet&lt;/servlet-class&gt;
  *   &lt;init-param&gt;
  *     &lt;param-name&gt;template.engine&lt;/param-name&gt;
- *     &lt;param-value&gt;groovy.text.GStringTemplateEngine&lt;/param-value&gt;
+ *     &lt;param-value&gt;groovy.text.StreamingTemplateEngine&lt;/param-value&gt;
  *   &lt;/init-param&gt;
  * &lt;/servlet&gt;
  * </pre>
@@ -96,15 +96,15 @@ import java.util.Map;
  * @author mbjarland@gmail.com
  * @author Matias Bjarland
  */
-public class SmartTemplateEngine extends TemplateEngine {
+public class StreamingTemplateEngine extends TemplateEngine {
     private final ClassLoader parentLoader;
     private static int counter = 1;
 
-    public SmartTemplateEngine() {
-        this(SmartTemplate.class.getClassLoader());
+    public StreamingTemplateEngine() {
+        this(StreamingTemplate.class.getClassLoader());
     }
 
-    public SmartTemplateEngine(ClassLoader parentLoader) {
+    public StreamingTemplateEngine(ClassLoader parentLoader) {
         this.parentLoader = parentLoader;
     }
 
@@ -113,10 +113,10 @@ public class SmartTemplateEngine extends TemplateEngine {
     */
 
     public Template createTemplate(final Reader reader) throws CompilationFailedException, ClassNotFoundException, IOException {
-        return new SmartTemplate(reader, parentLoader);
+        return new StreamingTemplate(reader, parentLoader);
     }
 
-    private static class SmartTemplate implements Template {
+    private static class StreamingTemplate implements Template {
         final Closure template;
         private static final String SCRIPT_HEAD =
             "package groovy.tmp.templates;" +
@@ -230,7 +230,7 @@ public class SmartTemplateEngine extends TemplateEngine {
          * @throws ClassNotFoundException
          * @throws IOException
          */
-        SmartTemplate(final Reader source, final ClassLoader parentLoader) throws CompilationFailedException, ClassNotFoundException, IOException {
+        StreamingTemplate(final Reader source, final ClassLoader parentLoader) throws CompilationFailedException, ClassNotFoundException, IOException {
             final StringBuilder target = new StringBuilder();
             List<StringSection> sections = new ArrayList<StringSection>();
             Position sourcePosition = new Position(1, 1);
