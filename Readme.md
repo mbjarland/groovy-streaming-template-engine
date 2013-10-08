@@ -145,8 +145,13 @@ engine does what it is supposed to do (at least to a degree comparable to the ex
 That being said, this code has _not_ been tested in production and no guarantees are
 made as for the validity of the code or the robustness of the templating logic. 
 
-## Author
-Matias Bjarland
-mbjarland@gmail.com
-(http://iteego.com)
+## About the Author
+name: Matias Bjarland - coordinates: Gothenburg, Sweden
 
+I run a software consultancy firm ([http://iteego.com](http://iteego.com)) which specializes in large scale e-commerce 
+implementations and enterprise software integrations. 
+
+I spend some of my spare cycles with groovy, gradle, grails, lisp, reading philosophy, learning new 
+languages, rock climbing, marveling over the beauty of the universe, and barefoot running. 
+
+Feel free to ping me via email at mbjarland@gmail.com.
