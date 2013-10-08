@@ -2,18 +2,19 @@
 
 ## What is this?
 This repository contains a templating engine for the groovy programming language. It is 
-an alternative and drop in replacement for the existing GStringTemplateEngine and 
-SimpleTemplateEngine engines included in the groovy libraries. 
+an alternative and drop in replacement for the existing [SimpleTemplateEngine](http://groovy.codehaus.org/gapi/groovy/text/SimpleTemplateEngine.html) 
+and [GStringTemplateEngine](http://groovy.codehaus.org/gapi/groovy/text/GStringTemplateEngine.html) engines included in the groovy libraries. 
 
 The name is slightly misleading as the code is not exactly based on streaming, but 
 the term 'streaming' captures the essense of the idea and was the best I could come up
-with. 
+with at the time. The engine was initially called SmartTemplateEngine, but I figured that name was 
+a tad obnoxious and renamed it. 
 
 ## Why another groovy template engine?
 The existing groovy template engines 
 [SimpleTemplateEngine](http://groovy.codehaus.org/gapi/groovy/text/SimpleTemplateEngine.html) and 
-[GStringTemplateEngine](http://groovy.codehaus.org/gapi/groovy/text/GStringTemplateEngine.html) can 
-not handle template strings larger than 64k. They throw the following exceptions when asked 
+[GStringTemplateEngine](http://groovy.codehaus.org/gapi/groovy/text/GStringTemplateEngine.html) 
+can not handle ([unit tests proving that fact](https://github.com/mbjarland/groovy-streaming-template-engine/blob/master/src/test/groovy/groovy/text/StreamingTemplateEngineTest.groovy#L201-219)) template strings larger than 64k. They throw the following exceptions when asked 
 to template a string of 64k+1 character: 
 
 _GStringTemplateEngine_
@@ -34,6 +35,30 @@ _SimpleTemplateEngine_
 
 in my experience, templates larger than 64k are not all that uncommon (I certainly run into them 
 all the time) and this limitation seems artificial and unnecessary. 
+
+## Limitations
+The engine in this repo can handle templates into the hundreds of megabytes. 
+
+This does however not mean the engine is fool proof. There are still limitations inherited 
+from the bytecode file format on the jvm...and any potential bugs caused by mental 
+stumbling on my part.  
+
+As an example of such a limitation, creating a 300M template 
+string with a template expression (i.e. '${bird}') every one kilobyte breaks the code with a 
+"method too large" exception from the jvm. 
+
+## Alternatives
+Morten Kjetland has implemented a [faster, replacement groovy template engine](https://github.com/mbknor/gt-engine) for 
+the play framework. This looks very promising. For details, check out his [blog post](http://kjetland.com/blog/2011/11/playframework-new-faster-groovy-template-engine/)
+about the release. 
+
+I have not performed any tests on play framework engine and I dont' know if it has size limitations 
+similar to the built in groovy ones or how it compares to the one in this repo. However, considering the complexity 
+of Mortens implementation and the competence of the author I would make a qualified guess that it is very capable. 
+
+The play framework engine uses the gsp template language which is slightly different 
+from the templage language used in the built in groovy template engines and the 
+engine in this git repo. 
 
 ## Why is this not part of the groovy libraries?
 Perhaps one day it might be. I am certainly open to it if there is interest from the groovy 
