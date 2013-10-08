@@ -314,8 +314,6 @@ class StreamingTemplateEngineTest {
     assert result.length() == SIXTY_FOUR_K * 2 + expectedMiddle.length()
   }
 
-
-
   @Test
   public void testStringOver64kWithStartingExpression() {
     StringBuilder data = new StringBuilder()

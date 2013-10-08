@@ -1,6 +1,7 @@
 package groovy.text;
 
 /**
+ * A custom exception class to flag template execution errors
  */
 public class TemplateExecutionException extends Exception  {
   public TemplateExecutionException() {

@@ -47,7 +47,7 @@ Example code (tested with groovy 2.1.6 or below):
 
 ```groovy
 @GrabResolver(name='groovy-template', root='http://artifacts.iteego.com/artifactory/public-release-local')
-@Grab('org.codehaus.groovy:groovy-streaming-template-engine:1.3')
+@Grab('org.codehaus.groovy:groovy-streaming-template-engine:1.4')
 @Grab('org.codehaus.groovy:groovy-templates:2.1.6')
 
 import groovy.text.StreamingTemplateEngine
@@ -103,7 +103,7 @@ repo is about.
 I initially wrote this template engine a number of years ago, but omitted to make it publicly 
 available as I assumed that such a glaring limitation would be addressed by the groovy 
 community and/or creators soon enough to make sharing the repository pointless. Years passed and 
-about once a year I went back to my repo, ran my negative unit tests (which prove that the current 
+about once a year I went back to my repo, ran my [negative unit tests](https://github.com/mbjarland/groovy-streaming-template-engine/blob/master/src/test/groovy/groovy/text/StreamingTemplateEngineTest.groovy#L201-219) (which prove that the current 
 groovy version still breaks for strings > 64k), shook my head and went back to my day job. 
 
 As templates can be used for a large number of arbitrary programming tasks ranging from code generation, 

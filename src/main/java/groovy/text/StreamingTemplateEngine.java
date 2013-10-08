@@ -1,4 +1,19 @@
 package groovy.text;
+/*
+ * Copyright 2003-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 import groovy.lang.*;
 import org.codehaus.groovy.control.CompilationFailedException;
@@ -15,21 +30,6 @@ import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-/*
- * Copyright 2003-2009 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
 /**
  * Processes template source files substituting variables and expressions into
@@ -97,6 +97,8 @@ import java.util.Map;
  * @author Matias Bjarland
  */
 public class StreamingTemplateEngine extends TemplateEngine {
+    private static final String TEMPLATE_SCRIPT_PREFIX = "StreamingTemplateScript";
+
     private final ClassLoader parentLoader;
     private static int counter = 1;
 
@@ -196,7 +198,7 @@ public class StreamingTemplateEngine extends TemplateEngine {
             StringSection precedingSection = sections.get(i);
             int traceLine = -1;
             for (StackTraceElement element : e.getStackTrace()) {
-                if (element.getClassName().contains("GStringTemplateScript")) {
+                if (element.getClassName().contains(TEMPLATE_SCRIPT_PREFIX)) {
                     traceLine = element.getLineNumber();
                     break;
                 }
@@ -387,7 +389,7 @@ public class StreamingTemplateEngine extends TemplateEngine {
               });
             final Class groovyClass;
             try {
-                groovyClass = loader.parseClass(new GroovyCodeSource(target.toString(), "GStringTemplateScript" + counter++ + ".groovy", "x"));
+                groovyClass = loader.parseClass(new GroovyCodeSource(target.toString(), TEMPLATE_SCRIPT_PREFIX + counter++ + ".groovy", "x"));
             } catch (MultipleCompilationErrorsException e) {
                 throw mangleMultipleCompilationErrorsException(e, sections);
 
@@ -510,7 +512,6 @@ public class StreamingTemplateEngine extends TemplateEngine {
         *                 |
         *           syntax error
         */
-
         private RuntimeException mangleMultipleCompilationErrorsException(MultipleCompilationErrorsException e, List<StringSection> sections) {
             RuntimeException result = e;
 
@@ -636,7 +637,5 @@ public class StreamingTemplateEngine extends TemplateEngine {
 
             return c;
         }
-
-
     }
 }
