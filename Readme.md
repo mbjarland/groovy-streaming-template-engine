@@ -7,8 +7,8 @@ and [GStringTemplateEngine](http://groovy.codehaus.org/gapi/groovy/text/GStringT
 
 The name is slightly misleading as the code is not exactly based on streaming, but 
 the term 'streaming' captures the essense of the idea and was the best I could come up
-with at the time. The engine was initially called SmartTemplateEngine, but I figured that name was 
-a tad obnoxious and renamed it. 
+with at the time. The engine was initially called SmartTemplateEngine but somebody once told 
+me that calling your baby smart is obnoxious so I renamed it. 
 
 ## Why another groovy template engine?
 The existing groovy template engines 
