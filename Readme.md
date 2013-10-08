@@ -14,8 +14,8 @@ a tad obnoxious and renamed it.
 The existing groovy template engines 
 [SimpleTemplateEngine](http://groovy.codehaus.org/gapi/groovy/text/SimpleTemplateEngine.html) and 
 [GStringTemplateEngine](http://groovy.codehaus.org/gapi/groovy/text/GStringTemplateEngine.html) 
-can not handle ([unit tests proving that fact](https://github.com/mbjarland/groovy-streaming-template-engine/blob/master/src/test/groovy/groovy/text/StreamingTemplateEngineTest.groovy#L201-219)) template strings larger than 64k. They throw the following exceptions when asked 
-to template a string of 64k+1 character: 
+can not handle template strings larger than 64k ([unit tests proving that fact](https://github.com/mbjarland/groovy-streaming-template-engine/blob/master/src/test/groovy/groovy/text/StreamingTemplateEngineTest.groovy#L201-219)). 
+They throw the following exceptions when asked to template a string of 64k+1 character: 
 
 _GStringTemplateEngine_
 
