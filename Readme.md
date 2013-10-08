@@ -136,7 +136,7 @@ rendering of various text based formats, rendering HTML etc etc and as a number 
 with no fix the 64k limitation in sight, I figured it was time to make this code publicly available. 
 
 ## Disclaimer
-This repo does contain a fairly thought through set of unit tests and I am fairly confident believe the 
+This repo does contain a fairly thought through set of unit tests and I believe the 
 engine does what it is supposed to do (at least to a degree comparable to the existing template engines). 
 
 That being said, this code has _not_ been tested in production and no guarantees are
