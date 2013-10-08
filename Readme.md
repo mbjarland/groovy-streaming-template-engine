@@ -36,35 +36,6 @@ _SimpleTemplateEngine_
 in my experience, templates larger than 64k are not all that uncommon (I certainly run into them 
 all the time) and this limitation seems artificial and unnecessary. 
 
-## Limitations
-The engine in this repo can handle templates into the hundreds of megabytes. 
-
-This does however not mean the engine is fool proof. There are still limitations inherited 
-from the bytecode file format on the jvm...and any potential bugs caused by mental 
-stumbling on my part.  
-
-As an example of such a limitation, creating a 300M template 
-string with a template expression (i.e. '${bird}') every one kilobyte breaks the code with a 
-"method too large" exception from the jvm. 
-
-## Alternatives
-Morten Kjetland has implemented a [faster, replacement groovy template engine](https://github.com/mbknor/gt-engine) for 
-the play framework. This looks very promising. For details, check out his [blog post](http://kjetland.com/blog/2011/11/playframework-new-faster-groovy-template-engine/)
-about the release. 
-
-I have not performed any tests on play framework engine and I dont' know if it has size limitations 
-similar to the built in groovy ones or how it compares to the one in this repo. However, considering the complexity 
-of Mortens implementation and the competence of the author I would make a qualified guess that it is very capable. 
-
-The play framework engine uses the gsp template language which is slightly different 
-from the templage language used in the built in groovy template engines and the 
-engine in this git repo. 
-
-## Why is this not part of the groovy libraries?
-Perhaps one day it might be. I am certainly open to it if there is interest from the groovy 
-maintainers. I think either fixing the existing engines or adding a new one which can handle 
-arbitrary template sizes is essential for a modern, dynamic language such as groovy. 
-
 ## Usage
 The interface for this template engine is identical to the existing groovy template engines. 
 
@@ -123,6 +94,35 @@ executing this gives:
 Normally, the template data would probably be pulled from a file (ala jsp, gsp, asp, xsp) but the above 
 demonstrates using the template engine on a string, is self contained, and gives a feel for what this 
 repo is about. 
+
+## Limitations
+The engine in this repo can handle templates into the hundreds of megabytes. 
+
+This does however not mean the engine is fool proof. There are still limitations inherited 
+from the bytecode file format on the jvm...and any potential bugs caused by mental 
+stumbling on my part.  
+
+As an example of such a limitation, creating a 300M template 
+string with a template expression (i.e. '${bird}') every one kilobyte breaks the code with a 
+"method too large" exception from the jvm. 
+
+## Alternatives
+Morten Kjetland has implemented a [faster, replacement groovy template engine](https://github.com/mbknor/gt-engine) for 
+the play framework. This looks very promising. For details, check out his [blog post](http://kjetland.com/blog/2011/11/playframework-new-faster-groovy-template-engine/)
+about the release. 
+
+I have not performed any tests on play framework engine and I dont' know if it has size limitations 
+similar to the built in groovy ones or how it compares to the one in this repo. However, considering the complexity 
+of Mortens implementation and the competence of the author I would make a qualified guess that it is very capable. 
+
+The play framework engine uses the gsp template language which is slightly different 
+from the templage language used in the built in groovy template engines and the 
+engine in this git repo. 
+
+## Why is this not part of the groovy libraries?
+Perhaps one day it might be. I am certainly open to it if there is interest from the groovy 
+maintainers. I think either fixing the existing engines or adding a new one which can handle 
+arbitrary template sizes is essential for a modern, dynamic language such as groovy. 
 
 ## History 
 I initially wrote this template engine a number of years ago, but omitted to make it publicly 
