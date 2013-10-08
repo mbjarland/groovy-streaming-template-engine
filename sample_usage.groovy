@@ -1,5 +1,5 @@
 @GrabResolver(name='groovy-template', root='http://artifacts.iteego.com/artifactory/public-release-local')
-@Grab('org.codehaus.groovy:groovy-streaming-template-engine:1.5')
+@Grab('org.codehaus.groovy:groovy-streaming-template-engine:1.6-SNAPSHOT')
 @Grab('org.codehaus.groovy:groovy-templates:2.1.6')
 
 import groovy.text.StreamingTemplateEngine

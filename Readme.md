@@ -43,7 +43,7 @@ Example code (tested with groovy 2.1.6 or below):
 
 ```groovy
 @GrabResolver(name='groovy-template', root='http://artifacts.iteego.com/artifactory/public-release-local')
-@Grab('org.codehaus.groovy:groovy-streaming-template-engine:1.5')
+@Grab('org.codehaus.groovy:groovy-streaming-template-engine:1.6-SNAPSHOT')
 @Grab('org.codehaus.groovy:groovy-templates:2.1.6')
 
 import groovy.text.StreamingTemplateEngine
@@ -107,7 +107,7 @@ string with a template expression (i.e. '${bird}') every one kilobyte breaks the
 "method too large" exception from the jvm. 
 
 ## Alternatives
-Morten Kjetland has implemented a [faster, replacement groovy template engine](https://github.com/mbknor/gt-engine) for 
+Morten Kjetland has implemented a [replacement groovy template engine](https://github.com/mbknor/gt-engine) for 
 the play framework. This looks very promising. For details, check out his [blog post](http://kjetland.com/blog/2011/11/playframework-new-faster-groovy-template-engine/)
 about the release. 
 
