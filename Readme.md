@@ -133,7 +133,10 @@ groovy version still breaks for strings > 64k), shook my head and went back to m
 
 As templates can be used for a large number of arbitrary programming tasks ranging from code generation, 
 rendering of various text based formats, rendering HTML etc etc and as a number of years have passed 
-with no fix the 64k limitation in sight, I figured it was time to make this code publicly available. 
+with no fix the 64k limitation in sight, I figured this code might save somebody some time. 
+
+Could also be there is another template engine out there and I just failed to find it...if so, please shoot me 
+an email and I will adjust accordingly. 
 
 ## Disclaimer
 This repo does contain a fairly thought through set of unit tests and I believe the 
@@ -141,3 +144,9 @@ engine does what it is supposed to do (at least to a degree comparable to the ex
 
 That being said, this code has _not_ been tested in production and no guarantees are
 made as for the validity of the code or the robustness of the templating logic. 
+
+## Author
+Matias Bjarland
+mbjarland@gmail.com
+(http://iteego.com)
+
