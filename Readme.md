@@ -43,7 +43,7 @@ Example code (tested with groovy 2.1.6 or below):
 
 ```groovy
 @GrabResolver(name='groovy-template', root='http://artifacts.iteego.com/artifactory/public-release-local')
-@Grab('org.codehaus.groovy:groovy-streaming-template-engine:1.4')
+@Grab('org.codehaus.groovy:groovy-streaming-template-engine:1.5')
 @Grab('org.codehaus.groovy:groovy-templates:2.1.6')
 
 import groovy.text.StreamingTemplateEngine
