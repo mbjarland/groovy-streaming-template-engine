@@ -115,7 +115,7 @@ I have not performed any tests on play framework engine and I dont' know if it h
 similar to the built in groovy ones or how it compares to the one in this repo. However, considering the complexity 
 of Mortens implementation and the competence of the author I would make a qualified guess that it is very capable. 
 
-The play framework engine uses the gsp template language which is slightly different 
+The play framework engine uses a template language slightly different 
 from the templage language used in the built in groovy template engines and the 
 engine in this git repo. 
 
