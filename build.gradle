@@ -23,14 +23,14 @@ apply plugin: 'maven'
 defaultTasks 'clean', 'build'
 
 group = 'org.codehaus.groovy'
-version = '2.1.6-SNAPSHOT'
+version = '2.1.9-SNAPSHOT'
 
 repositories { 
   mavenCentral()
 }
 
 dependencies {
-  def groovyVersion   = "2.1.6"
+  def groovyVersion   = "2.1.9"
 
   compile "org.codehaus.groovy:groovy:$groovyVersion",
           "org.codehaus.groovy:groovy-templates:$groovyVersion"
