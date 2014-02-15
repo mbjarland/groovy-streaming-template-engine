@@ -23,7 +23,9 @@ apply plugin: 'maven'
 defaultTasks 'clean', 'build'
 
 group = 'org.codehaus.groovy'
-version = '2.1.9-SNAPSHOT'
+
+//we use groovy version as prefix and an extra number for the actual release
+version = '2.1.9.1'
 
 repositories { 
   mavenCentral()
@@ -40,6 +42,6 @@ dependencies {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '1.8'
+  gradleVersion = '1.11'
   jarFile = 'wrapper/wrapper.jar'
 }

@@ -94,4 +94,75 @@ class StreamingTemplateEngineSpecification extends Specification {
       'bob'                  | 'bob'              | STREAMING        | defaultBinding | 'noExpressionWithBinding'
 */
   }
+
+  /**
+   * Validate fix of handling of \r\n line endings as reported by Wilfried Middleton 2014.02.12
+   */
+  def "should handle \\r\\n line feeds correctly (issue #1 on GitHub)"() {
+    setup:
+      String basic = '<%\r\n' +
+                     'def var1 = "cookie"\r\n' +
+                     'out << "This is var1: ${var1}"\r\n' +
+                     '%>\r\n' +
+                     'Style 1:\r\n' +
+                     '<%= "Again, this is var1:${var1}" %>\r\n' +
+                     '\r\n' +
+                     'Style 2:\r\n' +
+                     '${"var1:" + var1}'
+
+    when:
+      String gStringTemplate = new GStringTemplateEngine().createTemplate(basic).make().toString()
+      String streamingTemplate = new StreamingTemplateEngine().createTemplate(basic).make().toString()
+
+    then:
+      gStringTemplate == streamingTemplate
+  }
+
+
+  /**
+   * Validate fix of handling of if statements as reported by Wilfried Middleton 2014.02.12
+   */
+  def "should handle simple embedded if statements (issue #2 on GitHub)"() {
+    setup:
+      String templateText = 'before "<% if (false) { %>should not be included<% } else { %>should be included<% } %>" after'
+
+    when:
+
+      Template template = new StreamingTemplateEngine().createTemplate(templateText)
+      String result  = template.make().toString()
+
+    then:
+      result == 'before "should be included" after'
+  }
+
+  /**
+   * Validate fix of handling of if statements as reported by Wilfried Middleton 2014.02.12
+   */
+  def "should handle complex embedded if statements (issue #2 on GitHub)"() {
+    setup:
+      String templateText = 'first line text\n' +
+                            '<%\n' +
+                            'def var1 = "test"\n' +
+                            'if (false) {%>\n' +
+                            '  non executed text\n' +
+                            '  <%\n' +
+                            '  out << "more non-executed text"\n' +
+                            '} else {%>\n' +
+                            '  else stuff\n' +
+                            '<% \n' +
+                            '} %>\n' +
+                            '\n' +
+                            'last line text\n'
+
+    when:
+
+      Template template1 = new StreamingTemplateEngine().createTemplate(templateText)
+      Template template2 = new GStringTemplateEngine().createTemplate(templateText)
+
+      String streamingResult  = template1.make().toString()
+      String gStringResult    = template2.make().toString()
+
+    then:
+      streamingResult == gStringResult
+  }
 }

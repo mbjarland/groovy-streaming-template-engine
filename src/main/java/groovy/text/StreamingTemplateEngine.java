@@ -33,18 +33,20 @@ import java.util.Map;
 
 /**
  * Processes template source files substituting variables and expressions into
- * placeholders in a template source text to produce the desired output using
- * a streaming approach. This engine has equivalent functionality to the
- * {@link groovy.text.SimpleTemplateEngine} but creates the template using writable
- * closures making it more scalable for large templates or in streaming scenarios.
+ * placeholders in a template source text to produce the desired output using a
+ * streaming approach. This engine has equivalent functionality to the
+ * {@link groovy.text.SimpleTemplateEngine} but creates the template using
+ * writable closures making it more scalable for large templates or in streaming
+ * scenarios.
  * <p>
- * Specifically this template engine can handle strings larger than 64k which still
- * causes problems for the other groovy template engines.
+ * Specifically this template engine can handle strings larger than 64k which
+ * still causes problems for the other groovy template engines.
  * </p>
  * <p>
- * The template engine uses JSP style &lt;% %&gt; script and &lt;%= %&gt; expression syntax
- * or GString style expressions. The variable '<code>out</code>' is bound to the writer that the template
- * is being written to.
+ * The template engine uses JSP style &lt;% %&gt; script and &lt;%= %&gt;
+ * expression syntax or GString style expressions. The variable
+ * '<code>out</code>' is bound to the writer that the template is being written
+ * to.
  * </p>
  * Frequently, the template source will be in a file but here is a simple
  * example providing the template as a string:
@@ -67,10 +69,9 @@ import java.util.Map;
  * '''
  * def template = engine.createTemplate(text).make(binding)
  * println template.toString()
- * </pre>
- * This example uses a mix of the JSP style and GString style placeholders
- * but you can typically use just one style if you wish. Running this
- * example will produce this output:
+ * </pre> This example uses a mix of the JSP style and GString style
+ * placeholders but you can typically use just one style if you wish. Running
+ * this example will produce this output:
  * <pre>
  * Dear Grace Hopper,
  * <p/>
@@ -78,9 +79,9 @@ import java.util.Map;
  * 'Groovy for COBOL programmers' was accepted.
  * <p/>
  * The conference committee.
- * </pre>
- * The template engine can also be used as the engine for {@link groovy.servlet.TemplateServlet} by placing the
- * following in your <code>web.xml</code> file (plus a corresponding servlet-mapping element):
+ * </pre> The template engine can also be used as the engine for
+ * {@link groovy.servlet.TemplateServlet} by placing the following in your
+ * <code>web.xml</code> file (plus a corresponding servlet-mapping element):
  * <pre>
  * &lt;servlet&gt;
  *   &lt;servlet-name&gt;StreamingTemplate&lt;/servlet-name&gt;
@@ -90,8 +91,8 @@ import java.util.Map;
  *     &lt;param-value&gt;groovy.text.StreamingTemplateEngine&lt;/param-value&gt;
  *   &lt;/init-param&gt;
  * &lt;/servlet&gt;
- * </pre>
- * In this case, your template source file should be HTML with the appropriate embedded placeholders.
+ * </pre> In this case, your template source file should be HTML with the
+ * appropriate embedded placeholders.
  *
  * @author mbjarland@gmail.com
  * @author Matias Bjarland
@@ -111,37 +112,51 @@ public class StreamingTemplateEngine extends TemplateEngine {
     }
 
     /* (non-Javadoc)
-    * @see groovy.text.TemplateEngine#createTemplate(java.io.Reader)
-    */
-
+     * @see groovy.text.TemplateEngine#createTemplate(java.io.Reader)
+     */
+    @Override
     public Template createTemplate(final Reader reader) throws CompilationFailedException, ClassNotFoundException, IOException {
         return new StreamingTemplate(reader, parentLoader);
     }
 
     private static class StreamingTemplate implements Template {
-        final Closure template;
-        private static final String SCRIPT_HEAD =
-            "package groovy.tmp.templates;" +
-            "def getTemplate() { " +
-            //the below params are:
-            //  _p - parent class, for handling exceptions
-            //  _s - sections, string sections list
-            //  _b - binding map
-            //  out - out stream
-            //the three first parameters will be curried in as we move along
-                "return { _p, _s, _b, out -> " +
-                    "int _i = 0;" +
-                    "try {" +
-                        "delegate = new Binding(_b);";
+        private static final String SCRIPT_HEAD
+                = "package groovy.tmp.templates;"
+                + "def getTemplate() { "
+                + //the below params are:
+                //  _p - parent class, for handling exceptions
+                //  _s - sections, string sections list
+                //  _b - binding map
+                //  out - out stream
+                //the three first parameters will be curried in as we move along
+                "return { _p, _s, _b, out -> "
+                + "int _i = 0;"
+                + "try {"
+                + "delegate = new Binding(_b);";
 
-        private static final String SCRIPT_TAIL =
-                    "} catch (Throwable e) { " +
-                        "_p.error(_i, _s, e);" +
-                    "}" +
-                "}.asWritable()" +
-            "}";
+        private static final String SCRIPT_TAIL
+                = "} catch (Throwable e) { "
+                + "_p.error(_i, _s, e);"
+                + "}"
+                + "}.asWritable()"
+                + "}";
+
+        // we use a hard index instead of incrementing the _i variable due to previous
+        // bug where the increment was not executed when hitting non-executed if branch
+        private int index = 0;
+        final Closure template;
+
+        String scriptSource;
 
         private static class FinishedReadingException extends Exception {}
+
+        // WE USE THIS AS REUSABLE
+        private static final FinishedReadingException finishedReadingException;
+
+        static {
+            finishedReadingException = new FinishedReadingException();
+            finishedReadingException.setStackTrace(new StackTraceElement[0]);
+        }
 
         private static class Position {
             public int row;
@@ -163,6 +178,7 @@ public class StreamingTemplateEngine extends TemplateEngine {
         }
 
         private static class StringSection {
+
             StringBuilder data;
             Position firstSourcePosition;
             Position lastSourcePosition;
@@ -173,14 +189,15 @@ public class StreamingTemplateEngine extends TemplateEngine {
                 this.firstSourcePosition = new Position(firstSourcePosition);
             }
 
+            @Override
             public String toString() {
                 return data.toString();
             }
         }
 
-        private static void finishStringSection(List<StringSection> sections, StringSection currentSection,
-                                                StringBuilder templateExpressions,
-                                                Position lastSourcePosition, Position targetPosition) {
+        private void finishStringSection(List<StringSection> sections, StringSection currentSection,
+                                         StringBuilder templateExpressions,
+                                         Position lastSourcePosition, Position targetPosition) {
             //when we get exceptions from the parseXXX methods in the main loop, we might try to
             //re-finish a section
             if (currentSection.lastSourcePosition != null) {
@@ -189,7 +206,8 @@ public class StreamingTemplateEngine extends TemplateEngine {
             currentSection.lastSourcePosition = new Position(lastSourcePosition);
             sections.add(currentSection);
             //templateExpressions.append("//lines[").append(currentSection.firstLine).append(",").append(currentSection.lastLine).append("]\n");           
-            append(templateExpressions, targetPosition, "out<<_s[_i++];");
+            //append(templateExpressions, targetPosition, "out<<_s[_i++];");
+            append(templateExpressions, targetPosition, "out<<_s[_i=" + index++ + "];");
             currentSection.lastTargetPosition = new Position(targetPosition.row, targetPosition.column);
         }
 
@@ -213,10 +231,10 @@ public class StreamingTemplateEngine extends TemplateEngine {
         }
 
         /**
-         * Turn the template into a writable Closure
-         * When executed the closure evaluates all the code embedded in the
-         * template and then writes a GString containing the fixed and variable items
-         * to the writer passed as a parameter
+         * Turn the template into a writable Closure When executed the closure
+         * evaluates all the code embedded in the template and then writes a
+         * GString containing the fixed and variable items to the writer passed
+         * as a parameter
          * <p/>
          * For example:
          * <p/>
@@ -224,7 +242,8 @@ public class StreamingTemplateEngine extends TemplateEngine {
          * <p/>
          * would compile into:
          * <p/>
-         * { out -> out << "${"test"} of expr and "; test = 1 ; out << "${test} script."}.asWritable()
+         * { out -> out << "${"test"} of expr and "; test = 1 ; out << "${test}
+         * script."}.asWritable()
          *
          * @param source
          * @param parentLoader
@@ -299,6 +318,8 @@ public class StreamingTemplateEngine extends TemplateEngine {
             finishStringSection(sections, currentSection, target, sourcePosition, targetPosition);
             append(target, targetPosition, SCRIPT_TAIL);
 
+            scriptSource = target.toString();
+
             this.template = createTemplateClosure(sections, parentLoader, target);
         }
 
@@ -306,36 +327,35 @@ public class StreamingTemplateEngine extends TemplateEngine {
             lookAhead.delete(0, lookAhead.length());
         }
 
-        private static void handleEscaping(final Reader source,
-                                           final Position sourcePosition,
-                                           final StringSection currentSection,
-                                           final StringBuilder lookAhead) throws IOException, FinishedReadingException {
+        private void handleEscaping(final Reader source,
+                                    final Position sourcePosition,
+                                    final StringSection currentSection,
+                                    final StringBuilder lookAhead) throws IOException, FinishedReadingException {
             //if we get here, we just read in a back-slash from the source, now figure out what to do with it
             int c = read(source, sourcePosition, lookAhead);
 
             /*
-              The _only_ special escaping this template engine allows is to escape the sequences:
-              ${ and <% and potential slashes in front of these. Escaping in any other sections of the
-              source string is ignored. The following is a source -> result mapping of a few values, assume a
-              binding of [alice: 'rabbit'].
+             The _only_ special escaping this template engine allows is to escape the sequences:
+             ${ and <% and potential slashes in front of these. Escaping in any other sections of the
+             source string is ignored. The following is a source -> result mapping of a few values, assume a
+             binding of [alice: 'rabbit'].
 
-              Note: we don't do java escaping of slashes in the below
-              example, i.e. the source string is what you would see in a text editor when looking at your template
-              file: 
-               source string     result
-               'bob'            -> 'bob'
-               '\bob'           -> '\bob'
-               '\\bob'          -> '\\bob'
-               '${alice}'       -> 'rabbit'
-               '\${alice}'      -> '${alice}'
-               '\\${alice}'     -> '\rabbit'
-               '\\$bob'         -> '\\$bob'
-               '\\'             -> '\\'
-               '\\\'             -> '\\\'
-               '%<= alice %>'   -> 'rabbit'
-               '\%<= alice %>'  -> '%<= alice %>'
+             Note: we don't do java escaping of slashes in the below
+             example, i.e. the source string is what you would see in a text editor when looking at your template
+             file: 
+             source string     result
+             'bob'            -> 'bob'
+             '\bob'           -> '\bob'
+             '\\bob'          -> '\\bob'
+             '${alice}'       -> 'rabbit'
+             '\${alice}'      -> '${alice}'
+             '\\${alice}'     -> '\rabbit'
+             '\\$bob'         -> '\\$bob'
+             '\\'             -> '\\'
+             '\\\'             -> '\\\'
+             '%<= alice %>'   -> 'rabbit'
+             '\%<= alice %>'  -> '%<= alice %>'
              */
-
             if (c == '\\') {
                 //this means we have received a double backslash sequence
                 //if this is followed by ${ or <% we output one backslash
@@ -379,14 +399,12 @@ public class StreamingTemplateEngine extends TemplateEngine {
             clear(lookAhead);
         }
 
-        private Closure createTemplateClosure(List<StringSection> sections,
-                                              final ClassLoader parentLoader,
-                                              StringBuilder target) throws ClassNotFoundException {
+        private Closure createTemplateClosure(List<StringSection> sections, final ClassLoader parentLoader, StringBuilder target) throws ClassNotFoundException {
             final GroovyClassLoader loader = AccessController.doPrivileged(new PrivilegedAction<GroovyClassLoader>() {
-                  public GroovyClassLoader run() {
-                      return new GroovyClassLoader(parentLoader);
-                  }
-              });
+                public GroovyClassLoader run() {
+                    return new GroovyClassLoader(parentLoader);
+                }
+            });
             final Class groovyClass;
             try {
                 groovyClass = loader.parseClass(new GroovyCodeSource(target.toString(), TEMPLATE_SCRIPT_PREFIX + counter++ + ".groovy", "x"));
@@ -412,10 +430,10 @@ public class StreamingTemplateEngine extends TemplateEngine {
             return result;
         }
 
-        private static void parseGString(final Reader reader,
-                                         final StringBuilder target,
-                                         final Position sourcePosition,
-                                         final Position targetPosition) throws IOException, FinishedReadingException {
+        private void parseGString(final Reader reader,
+                                  final StringBuilder target,
+                                  final Position sourcePosition,
+                                  final Position targetPosition) throws IOException, FinishedReadingException {
             append(target, targetPosition, "out<<\"\"\"${");
 
             while (true) {
@@ -428,9 +446,8 @@ public class StreamingTemplateEngine extends TemplateEngine {
         }
 
         /**
-         * Parse a <% .... %> section
-         * if we are writing a GString close and append ';'
-         * then write the section as a statement
+         * Parse a <% .... %> section if we are writing a GString close and
+         * append ';' then write the section as a statement
          *
          * @param pendingC
          * @param reader
@@ -442,11 +459,11 @@ public class StreamingTemplateEngine extends TemplateEngine {
          * @throws
          *
          */
-        private static void parseSection(final int pendingC,
-                                         final Reader reader,
-                                         final StringBuilder target,
-                                         final Position sourcePosition,
-                                         final Position targetPosition) throws IOException, FinishedReadingException {
+        private void parseSection(final int pendingC,
+                final Reader reader,
+                final StringBuilder target,
+                final Position sourcePosition,
+                final Position targetPosition) throws IOException, FinishedReadingException {
             //the below is a quirk, we do this so that every non-string-section is prefixed by
             //the same number of characters (the others have "out<<\"\"\"${"), this allows us to
             //figure out the exception row and column later on
@@ -474,10 +491,10 @@ public class StreamingTemplateEngine extends TemplateEngine {
          * @return
          * @throws IOException
          */
-        private static void parseExpression(final Reader reader,
-                                            final StringBuilder target,
-                                            final Position sourcePosition,
-                                            final Position targetPosition) throws IOException, FinishedReadingException {
+        private void parseExpression(final Reader reader,
+                final StringBuilder target,
+                final Position sourcePosition,
+                final Position targetPosition) throws IOException, FinishedReadingException {
             append(target, targetPosition, "out<<\"\"\"${");
 
             while (true) {
@@ -493,10 +510,12 @@ public class StreamingTemplateEngine extends TemplateEngine {
             append(target, targetPosition, "}\"\"\";");
         }
 
+        @Override
         public Writable make() {
             return make(null);
         }
 
+        @Override
         public Writable make(final Map map) {
             //we don't need a template.clone here as curry calls clone under the hood
             final Closure template = this.template.curry(new Object[]{map});
@@ -504,14 +523,14 @@ public class StreamingTemplateEngine extends TemplateEngine {
         }
 
         /*
-        * Create groovy assertion style error message for template error. Example:
-        *
-        * Error parsing expression on line 71 column 15, message: no such property jboss for for class DUMMY
-        * templatedata${jboss}templateddatatemplateddata
-        *             ^------^
-        *                 |
-        *           syntax error
-        */
+         * Create groovy assertion style error message for template error. Example:
+         *
+         * Error parsing expression on line 71 column 15, message: no such property jboss for for class DUMMY
+         * templatedata${jboss}templateddatatemplateddata
+         *             ^------^
+         *                 |
+         *           syntax error
+         */
         private RuntimeException mangleMultipleCompilationErrorsException(MultipleCompilationErrorsException e, List<StringSection> sections) {
             RuntimeException result = e;
 
@@ -536,7 +555,7 @@ public class StreamingTemplateEngine extends TemplateEngine {
                         //the below being true indicates that we had an unterminated ${ or <% sequence and
                         //the column is thus meaningless, we reset it to where the %{ or <% starts to at
                         //least give the user a sporting chance
-                        if (sections.get(sections.size()-1) == precedingSection) {
+                        if (sections.get(sections.size() - 1) == precedingSection) {
                             errorPosition.column = precedingSection.lastSourcePosition.column;
                         }
 
@@ -548,7 +567,6 @@ public class StreamingTemplateEngine extends TemplateEngine {
 
             return result;
         }
-
 
         private String mangleExceptionMessage(String original, Position p) {
             String result = original;
@@ -589,8 +607,8 @@ public class StreamingTemplateEngine extends TemplateEngine {
         private StringSection findPrecedingSection(Position p, List<StringSection> sections) {
             StringSection result = null;
             for (StringSection s : sections) {
-                if (s.lastTargetPosition.row > p.row ||
-                  (s.lastTargetPosition.row == p.row && s.lastTargetPosition.column > p.column)) {
+                if (s.lastTargetPosition.row > p.row
+                        || (s.lastTargetPosition.row == p.row && s.lastTargetPosition.column > p.column)) {
                     break;
                 }
                 result = s;
@@ -599,7 +617,7 @@ public class StreamingTemplateEngine extends TemplateEngine {
             return result;
         }
 
-        private static void append(final StringBuilder target, Position targetPosition, char c) {
+        private void append(final StringBuilder target, Position targetPosition, char c) {
             if (c == '\n') {
                 targetPosition.row++;
                 targetPosition.column = 1;
@@ -610,24 +628,58 @@ public class StreamingTemplateEngine extends TemplateEngine {
             target.append(c);
         }
 
-        private static void append(final StringBuilder target, Position targetPosition, String s) {
+        private void append(final StringBuilder target, Position targetPosition, String s) {
             int len = s.length();
             for (int i = 0; i < len; i++) {
                 append(target, targetPosition, s.charAt(i));
             }
         }
 
-        private static int read(final Reader reader, Position position, StringBuilder lookAhead) throws IOException, FinishedReadingException {
+        private int read(final Reader reader, Position position, StringBuilder lookAhead) throws IOException, FinishedReadingException {
             int c = read(reader, position);
             lookAhead.append((char) c);
             return c;
         }
 
-        private static int read(final Reader reader, Position position) throws IOException, FinishedReadingException {
-            int c = reader.read();
-            if (c == -1) {
-                throw new FinishedReadingException();
+        // SEE BELOW
+        boolean useLastRead = false;
+        private int lastRead = -1;
+
+        /* All \r\n sequences are treated as a single \n. By doing this we
+         * produce the same output as the GStringTemplateEngine. Otherwise, some
+         * of our output is on a newline when it should not be.
+         *
+         * Instead of using a pushback reader, we just keep a private instance
+         * variable 'last'.
+         */
+        private int read(final Reader reader, Position position) throws IOException, FinishedReadingException {
+            int c;
+
+            if (useLastRead) {
+                // use last one if we stored a character
+                c = lastRead;
+                // reset last
+                useLastRead = false;
+                lastRead = -1;
+            } else {
+                c = reader.read();
+                if (c == '\r') {
+                    // IF CR FOLLOWED BY NEWLINE THEN JUST KEEP NEWLINE
+                    c = reader.read();
+                    if (c != '\n') {
+                        // ELSE keep original char
+                        // and pushback the one we just read
+                        lastRead = c;
+                        useLastRead = true;
+                        c = '\r';
+                    }
+                }
             }
+
+            if (c == -1) {
+                throw finishedReadingException;
+            }
+
             if (c == '\n') {
                 position.row++;
                 position.column = 1;
