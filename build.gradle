@@ -25,14 +25,14 @@ defaultTasks 'clean', 'build'
 group = 'org.codehaus.groovy'
 
 //we use groovy version as prefix and an extra number for the actual release
-version = '2.1.9.1'
+version = '2.2.1.1'
 
 repositories { 
   mavenCentral()
 }
 
 dependencies {
-  def groovyVersion   = "2.1.9"
+  def groovyVersion   = "2.2.1"
 
   compile "org.codehaus.groovy:groovy:$groovyVersion",
           "org.codehaus.groovy:groovy-templates:$groovyVersion"

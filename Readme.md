@@ -1,5 +1,9 @@
 # Streaming Temlpate Engine for Groovy
 
+## News
+* 2014.Feb.15 - Two issues (issue #1 and issue #2) with this template engine are now closed thanks to a contribution by Wilfried Middleton. 
+* 2014.Feb.15 - For those interested in downloading this artifact via our maven repository - we now use a groovy-version-bound versioning scheme for the template engine. So for groovy version '2.1.9' the current template engine version is '2.1.9.1'. We will increment the last number as needed. Currently we have only deployed versions for groovy '2.1.9.1' and '2.2.0.1'. 
+
 ## What is this?
 This repository contains a templating engine for the groovy programming language. It is 
 an alternative and drop in replacement for the existing [SimpleTemplateEngine](http://groovy.codehaus.org/gapi/groovy/text/SimpleTemplateEngine.html) 
