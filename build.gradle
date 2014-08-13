@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-  
+
 apply plugin: 'groovy'
 apply plugin: 'maven'
 
@@ -22,14 +22,14 @@ defaultTasks 'clean', 'build'
 group = 'org.codehaus.groovy'
 
 //we use groovy version as prefix and an extra number for the actual release
-version = '2.2.1.1'
+version = '2.3.6.1'
 
 repositories { 
   mavenCentral()
 }
 
 dependencies {
-  def groovyVersion   = "2.2.1"
+  def groovyVersion   = "2.3.6"
 
   compile "org.codehaus.groovy:groovy:$groovyVersion",
           "org.codehaus.groovy:groovy-templates:$groovyVersion"
@@ -39,6 +39,6 @@ dependencies {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '1.11'
+  gradleVersion = '2.0'
   jarFile = 'wrapper/wrapper.jar'
 }
