@@ -1,4 +1,4 @@
-# Streaming Temlpate Engine for Groovy
+# Streaming Template Engine for Groovy
 
 ## News
 * 2014.Feb.15 - Two issues ([issue #1](/../../issues/1) and [issue #2](/../../issues/2)) with this template engine are now closed thanks to a contribution by Wilfried Middleton. Many thanks for the infinite debug sessions and deep thinking! 
@@ -141,6 +141,9 @@ with no fix the 64k limitation in sight, I figured this code might save somebody
 
 Could also be there is another template engine out there and I just failed to find it...if so, please shoot me 
 an email and I will adjust accordingly. 
+
+## License
+Streaming Template Engine for Groovy is licensed under the terms of the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
 
 ## Disclaimer
 This repo does contain a fairly thought through set of unit tests and I believe the 
