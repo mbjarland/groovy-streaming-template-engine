@@ -1,7 +1,8 @@
 # Streaming Template Engine for Groovy
 
 ## News
-* 2013.Aug.13 - Removing erroneous references to GPL in build.gradle, making it more obvious that the project is licensed under the Apache license, adding license reference to this readme, and fixing typos. Thank you to Etienne Studer for pointing out the deficiencies. 
+* 2014.Aug.13 - Updating dependency versions to gradle 1.9 and groovy 2.3.6. Also updated the project version to 2.3.6.1 to reflect the fact that it is now compiled against groovy 2.3.6. Version 2.3.6.1 is published to the maven repository referenced to in the sample_usage.groovy file and in the example further down on this page. 
+* 2014.Aug.13 - Removing erroneous references to GPL in build.gradle, making it more obvious that the project is licensed under the Apache license, adding license reference to this readme, and fixing typos. Thank you to Etienne Studer for pointing out the deficiencies. 
 * 2014.Feb.15 - Two issues ([issue #1](/../../issues/1) and [issue #2](/../../issues/2)) with this template engine are now closed thanks to a contribution by Wilfried Middleton. Many thanks for the infinite debug sessions and deep thinking! 
 * 2014.Feb.15 - For those interested in downloading this artifact via our maven repository - we now use a groovy-version-bound versioning scheme for the template engine. So for groovy version '2.1.9' the current template engine version is '2.1.9.1'. We will increment the last number as needed. Currently we have only deployed versions '2.1.9.1' (groovy 2.1.9) and '2.2.1.1' (groovy 2.2.1). 
 
@@ -44,12 +45,12 @@ all the time) and this limitation seems artificial and unnecessary.
 ## Usage
 The interface for this template engine is identical to the existing groovy template engines. 
 
-Example code (tested with groovy 2.1.6 or below): 
+Example code (tested with groovy 2.3.6 or below): 
 
 ```groovy
 @GrabResolver(name='groovy-template', root='http://artifacts.iteego.com/artifactory/public-release-local')
-@Grab('org.codehaus.groovy:groovy-streaming-template-engine:2.1.6-SNAPSHOT')
-@Grab('org.codehaus.groovy:groovy-templates:2.1.6')
+@Grab('org.codehaus.groovy:groovy-streaming-template-engine:2.3.6.1')
+@Grab('org.codehaus.groovy:groovy-templates:2.3.6')
 
 import groovy.text.StreamingTemplateEngine
 import groovy.text.SimpleTemplateEngine
