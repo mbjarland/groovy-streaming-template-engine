@@ -1,6 +1,7 @@
 # Streaming Template Engine for Groovy
 
 ## News
+* 2013.Aug.13 - Removing erroneous references to GPL in build.gradle, making it more obvious that the project is licensed under the Apache license, adding license reference to this readme, and fixing typos. Thank you to Etienne Studer for pointing out the deficiencies. 
 * 2014.Feb.15 - Two issues ([issue #1](/../../issues/1) and [issue #2](/../../issues/2)) with this template engine are now closed thanks to a contribution by Wilfried Middleton. Many thanks for the infinite debug sessions and deep thinking! 
 * 2014.Feb.15 - For those interested in downloading this artifact via our maven repository - we now use a groovy-version-bound versioning scheme for the template engine. So for groovy version '2.1.9' the current template engine version is '2.1.9.1'. We will increment the last number as needed. Currently we have only deployed versions '2.1.9.1' (groovy 2.1.9) and '2.2.1.1' (groovy 2.2.1). 
 
